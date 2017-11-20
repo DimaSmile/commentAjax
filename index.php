@@ -1,33 +1,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-<style>
-.item{
-	margin: 0;
-}
-</style>
+<link rel="stylesheet" href="style.css" type="text/css" /><!-- Style -->	
+
 <?php 
 function select1111(){
-	$config = array(
-				'title' => 'myBlog',
-				'db' => array(
-					'server' => 'localhost',
-					'username' => 'root',
-					'password' => '',
-					'name' => 'comments_db'
-				),
-			);
-				$connection = mysqli_connect(
-				$config['db']['server'],
-				$config['db']['username'],
-				$config['db']['password'],
-				$config['db']['name']
-			);
-
-
-			if ($connection == false) {
-				echo "Не удалось подключиться к бд!!!";
-				mysqli_connect_error();
-				exit();
-			}
+	require 'db.php';
 
 	$result = mysqli_query($connection, "SELECT `comment` FROM `comments` ORDER BY `id` DESC ");
 		if ($result) {
@@ -40,16 +16,13 @@ function select1111(){
                return $data;
             } else {
                 throw new Exception("Can't execute get country method.");
-            }     
-	/*echo $comments;*/
-
-	
-				
-}
+            }     			
+	}
 ?>
 
-<form  method="POST" class="list" style=>
-	<textarea name="text" id="text" cols="30" rows="10" class="textcom">
+<form  method="POST" class="list" >
+	<textarea name="text" id="text" cols="30" rows="10" class="textcom" autofocus
+>
 		
 	</textarea><br>
 	<button type="submit" name="submit" id="submit">Отправить</button>
@@ -63,14 +36,13 @@ function select1111(){
 		foreach ($arrayComments as $value) {
 			echo "<p class='item'>".$value['comment']."</p><br>";
 		}
-		
-
 	?>
 </div>
+
+<!-- jQuery AJAX -->
 <script type="text/javascript">
 
-
-	jQuery(document).ready(function(){
+jQuery(document).ready(function(){
 		jQuery('#submit').click(function(e){
 		
 		var value = $("#text").val();
@@ -82,25 +54,18 @@ function select1111(){
 				  type: "POST",
 				  url: "ajax.php",
 				  data: {name:value},
-
 				  success: function(msg){
-				 
-				    	//console.log(msg);
-				    
-				    	var event = JSON.parse(msg, function(key, value) {
+			    	//console.log(msg);
+			    		var event = JSON.parse(msg, function(key, value) {
 							  if (key == 'date') return new Date(value);
 							  return value;
 							});
-				    
-					    	 $(".item:first").prepend("<p class='item'>" + event[0].comment + "</p>");
-					    	 $(".textcom").val(' ');
-				    	 //$(".item").val(msg['comment']);
-				
-				  }
-});
-				
-				
+			    
+			    	 	$(".item:first").prepend("<p class='item'>" + event[0].comment + "</p>");
+			    	 	$(".textcom").val(' ');
+				 	 }
+				});	
 		})
 	});
-	</script>
+</script>
 
